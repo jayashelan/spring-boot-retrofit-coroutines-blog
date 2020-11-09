@@ -13,16 +13,22 @@ import retrofit2.awaitResponse
 @Service
 class ServiceWithRegularClient(val jsonPlaceHolderRegularClient: JsonPlaceHolderRegularClient) {
 
-    suspend fun getOverviewAwait(): OverviewDto {
+    suspend fun getOverviewRegular(): OverviewDto {
         return withContext(Dispatchers.IO) {
             val fivePosts = (1..5).map { id ->
                 async {
-                    jsonPlaceHolderRegularClient.post(id).awaitResponse().body()!!
+                    log.info("fetching post $id")
+                    jsonPlaceHolderRegularClient.post(id).awaitResponse().body()!!.also {
+                        log.info("done fetching post $id")
+                    }
                 }
             }
             val fiveTodos = (1..5).map { id ->
                 async {
-                    jsonPlaceHolderRegularClient.todo(id).awaitResponse().body()!!
+                    log.info("fetching todo $id")
+                    jsonPlaceHolderRegularClient.todo(id).awaitResponse().body()!!.also {
+                        log.info("done fetching todo $id")
+                    }
                 }
             }
 
